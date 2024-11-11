@@ -38,7 +38,7 @@ class EventServiceProvider extends ServiceProvider
             $event->menu->add(
                 [
                     'text' => 'Mis Tokens: ' . $tokens,
-                    'url'  => '#', 
+                    'url'  => '/collaborators/my-tokens', 
                     'icon' => 'fas fa-coins', 
                 ],
                 'header' 
@@ -90,6 +90,8 @@ class EventServiceProvider extends ServiceProvider
                     ],
 
                 );
+
+             
             }
 
 

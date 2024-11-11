@@ -16,7 +16,7 @@ class CoursesController extends Controller
     {
         $userAuthenticatedId = Auth::id();
         
-        $courses = Course::where('collaborator_id', $userAuthenticatedId)->get();
+        $courses = Course::orderBy('created_at', 'DESC')->where('collaborator_id', $userAuthenticatedId)->get();
         
         return view('collaborators.courses.index')->with('courses', $courses);
     }

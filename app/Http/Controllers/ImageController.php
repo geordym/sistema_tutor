@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Endroid\QrCode\Color\Color;
+use Endroid\QrCode\Label\Label;
 use Illuminate\Http\Request;
 
 use Intervention\Image\Laravel\Facades\Image;
@@ -99,12 +101,17 @@ class ImageController extends Controller
         // Crear el escritor para guardar la imagen como PNG
         $writer = new PngWriter();
 
+        $label = new Label(
+            text: $codeText,  // El texto que quieres agregar debajo del QR
+            textColor: new Color(0, 0, 255)
+        );
+
         // Definir la ruta temporal donde se guardará el archivo QR
         $tempDir = sys_get_temp_dir();
         $qrCodePath = $tempDir . DIRECTORY_SEPARATOR . 'qr_code_' . uniqid() . '.png';
 
         // Generar y guardar el código QR como un archivo
-        $result = $writer->write($qrCode);
+        $result = $writer->write($qrCode, null, $label);
         $result->saveToFile($qrCodePath);
 
         // Retornar la ruta del archivo generado

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('courses_certificates', function (Blueprint $table) {
             $table->id();
-            $table->string('certify_code'); 
+            $table->string('certify_code')->unique(); 
             $table->string('student_fullname'); 
             $table->string('student_curp'); 
             $table->string('course_name');

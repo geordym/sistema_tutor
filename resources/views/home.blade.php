@@ -7,5 +7,5 @@
 @stop
 
 @section('content')
-    <p>Bienvenido al panel de administración de AdminLTE.</p>
+    <p>Bienvenido al panel de administración de EP System.</p>
 @stop

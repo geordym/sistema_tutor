@@ -15,7 +15,7 @@ class AlumnController extends Controller
     public function index()
     {
         $userAuthenticatedId = Auth::id();
-        $alumns = Alumn::where('collaborator_id', $userAuthenticatedId)->get();
+        $alumns = Alumn::orderBy('created_at', 'DESC')->where('collaborator_id', $userAuthenticatedId)->get();
         return view('collaborators.alumns.index')->with('alumns', $alumns);
     }
 

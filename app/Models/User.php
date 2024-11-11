@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -24,12 +26,17 @@ class User extends Authenticatable
         'password',
     ];
 
-    public function isAdmin(): Attribute
+    public function getIsAdminAttribute(): bool
     {
-        return new Attribute(
-            get: fn () => $this->user_type === \App\Enums\UserType::Admin,
-        );
+        return $this->user_type === \App\Enums\UserType::Admin;
     }
+
+    public function getIsCollaboratorAttribute(): bool
+    {
+        return $this->user_type === \App\Enums\UserType::User;
+    }
+
+
 
     public function collaborator()
     {

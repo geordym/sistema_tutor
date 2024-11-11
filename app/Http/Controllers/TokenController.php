@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\TokenLog;
 use App\Models\Collaborator;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
@@ -17,11 +17,22 @@ class TokenController extends Controller
      */
     public function index()
     {
-        $tokensLogs = TokenLog::all();
+        $tokensLogs = TokenLog::orderBy('created_at', 'DESC')->get();
         $collaborators = Collaborator::all();
 
 
         return view('tokens.index')->with('tokensLogs', $tokensLogs)->with('collaborators', $collaborators);
+    }
+
+
+    public function tokensOfCollaborator()
+    {
+        $userAuthenticatedId = Auth::id();
+
+        $tokensLogs = TokenLog::where('user_id', $userAuthenticatedId)
+            ->orderBy('created_at', 'DESC') // 'DESC' debe estar como segundo parámetro
+            ->get();
+        return view('collaborators.tokens.index')->with('tokensLogs', $tokensLogs);
     }
 
     /**
@@ -36,43 +47,42 @@ class TokenController extends Controller
     public function add(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'collaborator_id' => 'required|exists:collaborators,id', 
+            'collaborator_id' => 'required|exists:collaborators,id',
             'tokens' => 'required|integer|min:1',
-            'description' => 'nullable|string|max:255', 
+            'description' => 'nullable|string|max:255',
         ]);
-    
+
         if ($validator->fails()) {
             return redirect()->route('admin.tokens')
-                             ->withErrors($validator)
-                             ->withInput(); 
+                ->withErrors($validator)
+                ->withInput();
         }
-    
+
         $collaborator_id = $request->input('collaborator_id');
         $quantityTokensToAdd = $request->input('tokens');
         $description = $request->input('description');
-    
+
         try {
             DB::transaction(function () use ($collaborator_id, $quantityTokensToAdd, $description) {
                 TokenLog::create([
                     'user_id' => $collaborator_id,
                     'tokens' => $quantityTokensToAdd,
                     'description' => $description,
-                    'type' => 'addition' 
+                    'type' => 'addition'
                 ]);
-                
-                $collaborator = Collaborator::findOrFail($collaborator_id); 
+
+                $collaborator = Collaborator::findOrFail($collaborator_id);
                 $collaborator->tokens += $quantityTokensToAdd;
                 $collaborator->save(); // Guarda los cambios
             });
-    
+
             // Redirigir con éxito
             return redirect()->route('admin.tokens')
-                             ->with('success', 'Tokens añadidos correctamente.');
-    
+                ->with('success', 'Tokens añadidos correctamente.');
         } catch (\Exception $e) {
             // Redirigir con un mensaje de error
             return redirect()->route('admin.tokens')
-                             ->with('error', 'Error al añadir tokens: ' . $e->getMessage());
+                ->with('error', 'Error al añadir tokens: ' . $e->getMessage());
         }
     }
     /**
