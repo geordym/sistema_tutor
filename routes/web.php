@@ -4,7 +4,11 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CertificationController;
+use App\Http\Controllers\PerfilController;
+use App\Http\Controllers\PublicController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\StorageLinkController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,57 +24,76 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
-
-Route::get('/certificate/search', [CertificationController::class, 'showSearchForm'])->name('certificate.searchForm');
-Route::post('/certificate/search', [CertificationController::class, 'search'])->name('certificate.search');
+})->name('home');
 
 
-// Rutas de autenticación personalizadas
 Route::get('/internal/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/internal/login', [LoginController::class, 'login']);
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
+//Rutas de registro
+Route::get('/register-estudiante', [RegisterController::class, 'registrarEstudianteVista'])->name('register.estudiante');
+Route::post('/register-estudiante', [RegisterController::class, 'registrarEstudianteGuardar'])->name('register.estudiante.store');
+
+Route::get('/register-tutor', [RegisterController::class, 'registrarTutorVista'])->name('register.tutor');
+Route::post('/register-tutor', [RegisterController::class, 'registrarTutorGuardar'])->name('register.tutor.store');
+
+Route::get('/cuenta-pendiente', [PublicController::class, 'index'])->name('cuenta_pendiente.index');
+
+
+Route::get('/tutores', [PublicController::class, 'tutores'])->name('public.tutores');
+
+Route::get('/tutorias', [PublicController::class, 'tutorias'])->name('public.tutorias');
+Route::get('/tutorias/{materiaId}', [PublicController::class, 'tutoriasPorMateria'])->name('public.tutorias.porMateriaId');
+
 
 Route::group(['middleware' => ['auth', 'admin']], function () {
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
-    Route::get('/admin/colaboradores', [App\Http\Controllers\UserController::class, 'users'])->name('admin.users');
-    Route::post('/admin/colaboradores', [App\Http\Controllers\UserController::class, 'create'])->name('admin.users.create');
+    Route::get('/admin/home', [AdminController::class, 'home'])->name('admin.home');
+   
+    Route::get('/admin/usuarios', [AdminController::class, 'indexUsuarios'])->name('admin.usuarios.index');
 
-    Route::get('/admin/tokens', [App\Http\Controllers\TokenController::class, 'index'])->name('admin.tokens');
-    Route::post('/admin/tokens/add', [App\Http\Controllers\TokenController::class, 'add'])->name('admin.tokens.add');
+    Route::get('/admin/usuarios/desactivar/{id}', [AdminController::class, 'desactivarUsuario'])->name('admin.usuarios.desactivar');
+    Route::get('/admin/usuarios/activar/{id}', [AdminController::class, 'activarUsuario'])->name('admin.usuarios.activar');
+
+
 });
 
 Route::group(['middleware' => ['auth']], function () {
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/perfil', [PerfilController::class, 'perfil'])->name('perfil');
+
+    Route::post('/update-profile-image', [UserController::class, 'updateProfileImage'])->name('user.updateProfileImage');
+
     Route::get('/change-password', [App\Http\Controllers\ChangePasswordController::class, 'showChangePasswordForm'])->name('password.change');
     Route::post('/change-password', [App\Http\Controllers\ChangePasswordController::class, 'changePassword']);
 
-
-    Route::get('/image', [App\Http\Controllers\ImageController::class, 'generateCertifyPDF'])->name('ct');
-    Route::get('/qr', [App\Http\Controllers\ImageController::class, 'generateQR'])->name('t2');
-    
 });
 
+Route::group(['middleware' => ['auth', 'tutor']], function () {
+    Route::get('/tutor/home', [App\Http\Controllers\TutorController::class, 'home'])->name('tutor.home');
+    Route::get('/tutor/agenda', [App\Http\Controllers\TutorController::class, 'agenda'])->name('tutor.agenda');
+    Route::get('/tutor/espacio', [App\Http\Controllers\TutorController::class, 'createEspacio'])->name('tutor.createEspacio');
 
-Route::group(['middleware' => ['auth', 'collaborator']], function () {
-    Route::get('/collaborators/cursos', [App\Http\Controllers\CoursesController::class, 'index'])->name('collaborators.courses.index');
-    Route::get('/collaborators/cursos/create', [App\Http\Controllers\CoursesController::class, 'create'])->name('collaborators.courses.create');
-    Route::post('/collaborators/cursos', [App\Http\Controllers\CoursesController::class, 'store'])->name('collaborators.courses.store');
-    
-    Route::get('/collaborators/alumnos', [App\Http\Controllers\AlumnController::class, 'index'])->name('collaborators.alumns.index');
-    Route::get('/collaborators/alumnos/create', [App\Http\Controllers\AlumnController::class, 'create'])->name('collaborators.alumns.create');
-    Route::post('/collaborators/alumnos', [App\Http\Controllers\AlumnController::class, 'store'])->name('collaborators.alumns.store');
-    
-    Route::get('/collaborators/certificados', [App\Http\Controllers\CertificationController::class, 'index'])->name('collaborators.certification.index');
-    Route::get('/collaborators/certificados/create', [App\Http\Controllers\CertificationController::class, 'create'])->name('collaborators.certification.create');
-    Route::post('/collaborators/certificados', [App\Http\Controllers\CertificationController::class, 'store'])->name('collaborators.certification.store');
-    Route::get('/collaborators/my-tokens', [App\Http\Controllers\TokenController::class, 'tokensOfCollaborator'])->name('collaborators.tokens');
+
+    Route::post('/tutor/espacio', [App\Http\Controllers\EspacioController::class, 'store'])->name('espacios.store');
 
 });
 
-//Rutas de colaboradores
+Route::group(['middleware' => ['auth', 'estudiante']], function () {
+    Route::get('/agendar/clase/{id}', [App\Http\Controllers\AgendaController::class, 'agendarVista'])->name('agendar.tutor');
+    Route::post('/agendar/confirmacion', [App\Http\Controllers\AgendaController::class, 'agendarConfirmacion'])->name('agendar.tutor.confirmacion');
+    Route::post('/agendar/finalizar', [App\Http\Controllers\AgendaController::class, 'finalizarAgendamiento'])->name('agendar.tutor.finalizar');
+
+    Route::get('/estudiante/citas', [App\Http\Controllers\EstudianteController::class, 'citas'])->name('estudiantes.citas');
+
+    Route::get('/estudiante/facturas', [App\Http\Controllers\FacturaController::class, 'mostrarVistaFacturas'])->name('estudiantes.facturas');
+    Route::get('/estudiante/facturas/{id}', [App\Http\Controllers\FacturaController::class, 'verFactura'])->name('estudiantes.facturas_visualizar');
+
+
+    Route::get('/estudiante/home', [App\Http\Controllers\EstudianteController::class, 'home'])->name('estudiantes.home');
+});
+
 
 
 

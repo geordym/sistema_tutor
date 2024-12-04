@@ -15,6 +15,10 @@
 />
 
 <!-- for pinned version -->
+@vite('resources/js/app.js')  <!-- Esto se encargará de incluir el archivo con el nombre hashado -->
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/dual-listbox@1.0.9/dist/dual-listbox.min.js"></script>
 <link
     href="https://cdn.jsdelivr.net/npm/dual-listbox@1.0.9/dist/dual-listbox.css"

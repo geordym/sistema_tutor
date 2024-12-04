@@ -7,8 +7,6 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Auth;
-
-
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
 
 class EventServiceProvider extends ServiceProvider
@@ -50,20 +48,10 @@ class EventServiceProvider extends ServiceProvider
             if (Auth::check() && (Auth::user()->user_type === 'admin')) {
                 $event->menu->add(
                     [
-                        'text' => 'Tokens',
-                        'url'  => '/admin/tokens',
+                        'text' => 'Usuarios',
+                        'url'  => '/admin/usuarios',
                     ],
-
                 );
-              
-                $event->menu->add(
-                    [
-                        'text' => 'Colaboradores',
-                        'url'  => '/admin/colaboradores',
-                    ],
-
-                );
-                
             }
 
             if (Auth::check() && (Auth::user()->user_type === 'user')) {
@@ -94,14 +82,42 @@ class EventServiceProvider extends ServiceProvider
              
             }
 
+            if (Auth::check() && (Auth::user()->user_type === 'tutor')) {
+                $event->menu->add(
+                    [
+                        'text' => 'Agenda',
+                        'url'  => '/tutor/agenda',
+                    ],
+
+                );
+              
+                $event->menu->add(
+                    [
+                        'text' => 'Citas',
+                        'url'  => '/tutor/citas',
+                    ],
+
+                );
+
+                $event->menu->add(
+                    [
+                        'text' => 'Saldo',
+                        'url'  => '/tutor/saldo',
+                    ],
+
+                );
+             
+            }
+
+            $event->menu->add([
+                'text' => 'Perfil',
+                'url'  => '/perfil',
+            ]);
 
             $event->menu->add([
                 'text' => 'Acceso',
                 'url'  => '/change-password',
             ]);
-
-
-            
 
         });
 

@@ -7,7 +7,8 @@ use Illuminate\Support\Collection;
 enum UserType: string
 {
     case Admin = 'admin';
-    case User = 'user';
+    case Tutor = 'tutor';
+    case Estudiante = 'estudiante';
 
     public static function forMigration(): array {
         return collect(self::cases())

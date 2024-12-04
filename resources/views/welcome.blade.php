@@ -1,47 +1,44 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Buscar Certificado</title>
+@extends('components.master')
 
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+@section('title', 'Sistema Tutores')
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
-        <a class="navbar-brand text-white mx-auto" href="#">Sistema de Certificados</a>
-    </nav>
-
-    <div class="container d-flex justify-content-center align-items-center" style="height: 80vh;">
-        <div class="card shadow-sm" style="width: 100%; max-width: 500px;">
-            <div class="card-body">
-                <h2 class="card-title text-center">Buscar Certificado</h2>
-
-                <!-- Error Message -->
-                @if(session('error'))
-                    <div class="alert alert-danger" role="alert">
-                        {{ session('error') }}
-                    </div>
-                @endif
-
-                <!-- Search Form -->
-                <form action="{{ route('certificate.search') }}" method="POST">
-                    @csrf
-                    <div class="form-group">
-                        <label for="certificate_code">Ingresa el código del certificado:</label>
-                        <input type="text" id="certificate_code" name="certificate_code" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Buscar</button>
-                </form>
+@section('content')
+    <div class="container">
+        <!-- Sección Hero (introducción) -->
+        <div class="row justify-content-center my-5">
+            <div class="col-md-8 text-center">
+                <h1 class="display-4 text-primary">Bienvenido a nuestro Sistema de Tutores y Estudiantes</h1>
+                <p class="lead">¡Conéctate con tutores calificados y mejora tu aprendizaje, o comparte tu conocimiento y gana dinero! Regístrate ahora y comienza a disfrutar de nuestras ventajas.</p>
             </div>
         </div>
-    </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+        <!-- Sección para Tutores -->
+        <div class="row justify-content-center my-5">
+            <div class="col-md-5">
+                <div class="card shadow-lg">
+                    <div class="card-body text-center">
+                        <h2 class="card-title">¿Eres Tutor?</h2>
+                        <p>Comparte tus conocimientos y gana dinero en tus tiempos libres. Únete a nuestra red de tutores y ofrece clases a estudiantes de todo el mundo.</p>
+                        <a href="{{ route('register.tutor') }}" class="btn btn-primary btn-lg">Regístrate aquí y empieza a enseñar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección para Estudiantes -->
+        <div class="row justify-content-center my-5">
+            <div class="col-md-5">
+                <div class="card shadow-lg">
+                    <div class="card-body text-center">
+                        <h2 class="card-title">¿Eres Estudiante?</h2>
+                        <p>¿Buscas ayuda con tus asignaturas? Agenda clases con tutores expertos y mejora tu rendimiento académico. ¡Es fácil y rápido!</p>
+                        <a href="{{ route('register.estudiante') }}" class="btn btn-success btn-lg">Regístrate aquí y encuentra un tutor</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      
+
+    </div> <!-- Fin del contenedor -->
+@endsection

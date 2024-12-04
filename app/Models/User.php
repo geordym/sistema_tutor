@@ -31,18 +31,7 @@ class User extends Authenticatable
         return $this->user_type === \App\Enums\UserType::Admin;
     }
 
-    public function getIsCollaboratorAttribute(): bool
-    {
-        return $this->user_type === \App\Enums\UserType::User;
-    }
-
-
-
-    public function collaborator()
-    {
-        return $this->hasOne(Collaborator::class, 'user_id');
-    }
-
+  
     /**
      * The attributes that should be hidden for serialization.
      *
