@@ -75,7 +75,7 @@
         <!-- Materia -->
         <div class="mb-3">
             <label for="materia" class="form-label">Materia</label>
-            <select id="materia" name="materia_id" class="form-control" required>
+            <select id="materia" name="materia" class="form-control" required>
                 <option value="">Selecciona una opción</option>
             </select>
         </div>
