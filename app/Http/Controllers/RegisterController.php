@@ -139,7 +139,7 @@ class RegisterController extends Controller
             $userId = DB::getPdo()->lastInsertId(); // Obtener el ID del usuario insertado
 
             // 2. Insertar los datos del tutor
-            DB::select("
+            DB::insert("
             INSERT INTO tutores (user_id, materia_id, area_id, nombre, telefono, correo, direccion, costo_por_hora, created_at, updated_at)
             VALUES (:user_id, :materia_id, :area_id, :nombre, :telefono, :correo, :direccion, :costo_por_hora, :created_at, :updated_at);
         ", [
