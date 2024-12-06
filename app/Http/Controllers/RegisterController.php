@@ -40,29 +40,29 @@ class RegisterController extends Controller
 
         try {
             DB::insert("
-            INSERT INTO users (user_type, name, email, password, created_at, updated_at) 
-            VALUES (:user_type, :name, :email, :password, NOW(), NOW())
+            INSERT INTO users (user_type, name, email, password, created_at, updated_at)
+            VALUES (:user_type, :name, :email, :password, GETDATE(), GETDATE())
         ", [
-                'user_type' => 'estudiante',
-                'name' => $request->input('nombre'),
-                'email' => $request->input('email'),
-                'password' => bcrypt($request->input('password')),
-            ]);
-
-            $userId = DB::selectOne("SELECT LAST_INSERT_ID() AS id")->id;
+            'user_type' => 'estudiante',
+            'name' => $request->input('nombre'),
+            'email' => $request->input('email'),
+            'password' => bcrypt($request->input('password')),
+        ]);
+        $userId = DB::getPdo()->lastInsertId();
 
             DB::insert("
-            INSERT INTO estudiantes (nombre, correo, fecha_nacimiento, user_id, matricula, telefono, direccion, created_at, updated_at) 
-            VALUES (:nombre, :correo, :fecha_nacimiento, :user_id, :matricula, :telefono, :direccion, NOW(), NOW())
+            INSERT INTO estudiantes (nombre, correo, fecha_nacimiento, user_id, matricula, telefono, direccion, created_at, updated_at)
+            VALUES (:nombre, :correo, :fecha_nacimiento, :user_id, :matricula, :telefono, :direccion, GETDATE(), GETDATE())
         ", [
-                'nombre' => $request->input('nombre'),
-                'correo' => $request->input('email'),
-                'fecha_nacimiento' => $request->input('fecha_nacimiento'),
-                'user_id' => $userId,
-                'matricula' => $request->input('matricula'),
-                'telefono' => $request->input('telefono'),
-                'direccion' => $request->input('direccion'),
-            ]);
+            'nombre' => $request->input('nombre'),
+            'correo' => $request->input('email'),
+            'fecha_nacimiento' => $request->input('fecha_nacimiento'),
+            'user_id' => $userId,
+            'matricula' => $request->input('matricula'),
+            'telefono' => $request->input('telefono'),
+            'direccion' => $request->input('direccion'),
+        ]);
+        
 
 
             DB::commit();
