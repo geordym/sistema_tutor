@@ -23,7 +23,7 @@ return new class extends Migration
 
             $table->foreignId('espacio_id')->constrained('espacios')->onDelete('cascade'); // Tutor relacionado
             $table->foreignId('tutor_id')->constrained('tutores')->onDelete('cascade'); // Tutor relacionado
-            $table->foreignId('estudiante_id')->constrained('estudiantes')->onDelete('cascade'); // Estudiante relacionado
+            $table->foreignId('estudiante_id')->constrained()->onDelete('no action');
             $table->string('estado'); // Estado de la cita (pendiente, confirmada, cancelada, etc.)
             $table->string('enlace_reunion')->nullable(); // Enlace de la reunión (por ejemplo, para videollamadas)
             $table->string('tipo'); // Tipo de cita (por ejemplo, "presencial" o "online")

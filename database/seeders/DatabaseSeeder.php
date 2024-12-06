@@ -18,85 +18,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\User::factory()->create([
-            'user_type' => \App\Enums\UserType::Admin,
-            'name' => 'Admin',
-            'email' => 'admin@adminlte.com',
-            'password' => bcrypt('password123'), // Reemplaza 'password123' con la contraseña deseada
+        DB::insert('insert into users (name, email, password, user_type, created_at, updated_at) values (?, ?, ?, ?, ?, ?)', [
+            'Admin',
+            'admin@adminlte.com',
+            bcrypt('password123'),
+            'Admin',
+            now(),
+            now(),
         ]);
 
-       
-        // Crear un estudiante
-        $studentUser = User::factory()->create([
-            'user_type' => UserType::Estudiante,
-            'name' => 'Estudiante Ejemplar',
-            'email' => 'estudiante@domain.com',
-            'password' => bcrypt('password123'),
+        DB::insert('insert into users (name, email, password, user_type, created_at, updated_at) values (?, ?, ?, ?, ?, ?)', [
+            'Estudiante Ejemplar',
+            'estudiante@domain.com',
+            bcrypt('password123'),
+            'Estudiante',
+            now(),
+            now(),
         ]);
-
-        Estudiante::create([
-            'nombre' => $studentUser->name,
-            'matricula' => 'EST12345',
-            'correo' => $studentUser->email,
-            'telefono' => '987654321',
-            'fecha_nacimiento' => '2000-01-01',
-            'direccion' => 'Avenida 456, Ciudad',
-            'user_id' => $studentUser->id,
-        ]);
-
-        DB::table('areas')->insert([
-            ['nombre' => 'Medicina', 'created_at' => now(), 'updated_at' => now()],
-            ['nombre' => 'Administración', 'created_at' => now(), 'updated_at' => now()],
-            ['nombre' => 'Ingeniería en Sistemas', 'created_at' => now(), 'updated_at' => now()],
-            ['nombre' => 'Matemáticas', 'created_at' => now(), 'updated_at' => now()],
-        ]);
-
-        DB::table('materias')->insert([
-            [
-                'area_id' => 1,  // Medicina
-                'nombre' => 'Anatomía',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'area_id' => 2,  // Administración
-                'nombre' => 'Gestión Empresarial',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'area_id' => 3,  // Ingeniería en Sistemas
-                'nombre' => 'Programación Avanzada',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'area_id' => 4,  // Matemáticas
-                'nombre' => 'Cálculo Diferencial',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
-
-
-        $tutorUser = User::factory()->create([
-            'user_type' => UserType::Tutor,
-            'name' => 'Tutor Principal',
-            'email' => 'tutor@domain.com',
-            'password' => bcrypt('password123'),
-        ]);
-
-        Tutor::create([
-            'nombre' => $tutorUser->name,
-            'area_id' => 1,
-            'materia_id' => 1,
-            'telefono' => '123456789',
-            'costo_por_hora' => 5000,
-            'correo' => $tutorUser->email,
-            'direccion' => 'Calle 123, Ciudad',
-            'user_id' => $tutorUser->id,
-        ]);
-
         
     }
 }

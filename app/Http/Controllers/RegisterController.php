@@ -19,7 +19,7 @@ class RegisterController extends Controller
     public function registrarEstudianteGuardar(Request $request)
     {
 
-       //dd($request);
+        //dd($request);
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string|max:255',
             'matricula' => 'required|string|max:255',
@@ -37,29 +37,33 @@ class RegisterController extends Controller
         DB::beginTransaction();
 
 
-        
+
         try {
-            $userId = DB::table('users')->insertGetId([
+            DB::insert("
+            INSERT INTO users (user_type, name, email, password, created_at, updated_at) 
+            VALUES (:user_type, :name, :email, :password, NOW(), NOW())
+        ", [
                 'user_type' => \App\Enums\UserType::Estudiante,
                 'name' => $request->input('nombre'),
                 'email' => $request->input('email'),
                 'password' => bcrypt($request->input('password')),
-                'created_at' => now(),
-                'updated_at' => now(),
             ]);
 
+            $userId = DB::selectOne("SELECT LAST_INSERT_ID() AS id")->id;
 
-            DB::table('estudiantes')->insert([
+            DB::insert("
+            INSERT INTO estudiantes (nombre, correo, fecha_nacimiento, user_id, matricula, telefono, direccion, created_at, updated_at) 
+            VALUES (:nombre, :correo, :fecha_nacimiento, :user_id, :matricula, :telefono, :direccion, NOW(), NOW())
+        ", [
                 'nombre' => $request->input('nombre'),
                 'correo' => $request->input('email'),
                 'fecha_nacimiento' => $request->input('fecha_nacimiento'),
-                'user_id' => $userId, 
+                'user_id' => $userId,
                 'matricula' => $request->input('matricula'),
                 'telefono' => $request->input('telefono'),
                 'direccion' => $request->input('direccion'),
-                'created_at' => now(),
-                'updated_at' => now(),
             ]);
+
 
             DB::commit();
 
@@ -76,21 +80,25 @@ class RegisterController extends Controller
 
     public function registrarTutorVista()
     {
-        // Obtener las áreas y sus materias
-        $areasMaterias = DB::table('areas as a')
-            ->join('materias as m', 'a.id', '=', 'm.area_id')
-            ->select('a.id as area_id', 'a.nombre as area_nombre', 'm.id as materia_id', 'm.nombre as materia_nombre')
-            ->orderBy('a.nombre')
-            ->orderBy('m.nombre')
-            ->get();
+        $areas = DB::select("
+            SELECT a.id AS area_id, a.nombre AS area_nombre
+            FROM areas AS a
+            ORDER BY a.nombre
+        ");
 
-        $areasMaterias = $areasMaterias->map(function ($item) {
-            $item->area_nombre = $this->removeAccents($item->area_nombre);
-            $item->materia_nombre = $this->removeAccents($item->materia_nombre);
-            return $item;
-        });
+        foreach ($areas as $area) {
+            $area->area_nombre = $this->removeAccents($area->area_nombre);
 
-        return view('public.registrar_tutor')->with('areasMaterias', $areasMaterias);
+            $area->materias = DB::select("
+                SELECT m.id AS materia_id, m.nombre AS materia_nombre
+                FROM materias AS m
+                WHERE m.area_id = :area_id
+                ORDER BY m.nombre
+            ", ['area_id' => $area->area_id]);
+        }
+
+
+        return view('public.registrar_tutor')->with('areasMaterias', $areas);
     }
 
     private function removeAccents($string)
@@ -104,6 +112,7 @@ class RegisterController extends Controller
 
     public function registrarTutorGuardar(Request $request)
     {
+        //dd($request);
         // Validación de datos
         $request->validate([
             'nombre' => 'required|string|max:255',
@@ -112,22 +121,29 @@ class RegisterController extends Controller
         ]);
 
         DB::beginTransaction();
-    
+
         try {
             // 1. Insertar el nuevo usuario en la tabla de usuarios
-            $user = DB::table('users')->insertGetId([
+           DB::insert("
+            INSERT INTO users (user_type, name, email, password, created_at, updated_at)
+            VALUES (:user_type, :name, :email, :password, :created_at, :updated_at);
+        ", [
                 'user_type' => \App\Enums\UserType::Tutor,
                 'name' => $request->input('nombre'),
-                'email' => $request->input('email'), // Asumiendo que se pide un email
-                'password' => bcrypt($request->input('password')), // Asumiendo que se pide una contraseña
+                'email' => $request->input('email'),
+                'password' => bcrypt($request->input('password')), // Hasheo de la contraseña
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
 
+            $userId = DB::getPdo()->lastInsertId(); // Obtener el ID del usuario insertado
 
-
-            DB::table('tutores')->insert([
-                'user_id' => $user,  // Relacionamos el tutor con el usuario creado
+            // 2. Insertar los datos del tutor
+            DB::select("
+            INSERT INTO tutores (user_id, materia_id, area_id, nombre, telefono, correo, direccion, costo_por_hora, created_at, updated_at)
+            VALUES (:user_id, :materia_id, :area_id, :nombre, :telefono, :correo, :direccion, :costo_por_hora, :created_at, :updated_at);
+        ", [
+                'user_id' => $userId,
                 'materia_id' => $request->input('materia'),
                 'area_id' => $request->input('area'),
                 'nombre' => $request->input('nombre'),

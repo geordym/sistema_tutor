@@ -4,7 +4,6 @@
 
 @section('content')
 
-
 @if(session('success'))
 <div class="alert alert-success">
     {{ session('success') }}
@@ -28,9 +27,9 @@
 @endif
 
 <script>
+    // Declarar las áreas y sus materias como un objeto JavaScript
     const areasMaterias = @json($areasMaterias);
 </script>
-
 
 <div class="container my-5">
     <h1 class="text-center mb-4">Registrar Tutor</h1>
@@ -64,22 +63,24 @@
 
         <!-- Area -->
         <div class="mb-3">
-            <label for="area" class="form-label">Area</label>
-            <select id="area" name="area" class="form-control">
-                <option value="">Selecciona una opción</option>
-                @foreach ($areasMaterias->unique('area_id') as $area)
-                <option value="{{ $area->area_id }}">{{ $area->area_nombre }}</option>
+            <label for="area" class="form-label">Área</label>
+            <select class="form-control" name="area_id" id="area_id" required>
+                <option value="">Selecciona un área</option>
+                @foreach ($areasMaterias as $area)
+                    <option value="{{ $area->area_id }}">{{ $area->area_nombre }}</option>
                 @endforeach
             </select>
         </div>
 
+        <!-- Materia -->
         <div class="mb-3">
             <label for="materia" class="form-label">Materia</label>
-            <select id="materia" name="materia" class="form-control">
+            <select id="materia" name="materia_id" class="form-control" required>
                 <option value="">Selecciona una opción</option>
             </select>
         </div>
 
+        <!-- Teléfono -->
         <div class="mb-3">
             <label for="telefono" class="form-label">Teléfono</label>
             <input type="text" class="form-control" id="telefono" name="telefono" required>
@@ -94,34 +95,27 @@
         <button type="submit" class="btn btn-primary w-100">Registrar Tutor</button>
     </form>
 
-
-
 </div>
-
-
 
 <script>
     // Actualiza las materias basadas en el área seleccionada
-    document.getElementById('area').addEventListener('change', function() {
-        console.log("Cambiado");
+    document.getElementById('area_id').addEventListener('change', function() {
         const selectedAreaId = this.value;
-
         const materiaSelect = document.getElementById('materia');
-        console.log(materiaSelect);
+        materiaSelect.innerHTML = '<option value="">Selecciona una opción</option>'; // Limpiar las materias
 
-        materiaSelect.innerHTML = '<option value="">Selecciona una opción</option>'; // lo puse aqui para vaciar las materias y poner las nuevas
-
-        const filteredMaterias = areasMaterias.filter(item => item.area_id == selectedAreaId);
-        console.log(filteredMaterias);
-
-        filteredMaterias.forEach(item => {
-            const option = document.createElement('option');
-            option.value = item.materia_id;
-            option.textContent = item.materia_nombre;
-            materiaSelect.appendChild(option);
-            console.log("Creando option");
-            console.log(item);
-        });
+        // Filtrar las materias de la área seleccionada
+        const selectedArea = areasMaterias.find(area => area.area_id == selectedAreaId);
+        
+        if (selectedArea) {
+            selectedArea.materias.forEach(materia => {
+                const option = document.createElement('option');
+                option.value = materia.materia_id;
+                option.textContent = materia.materia_nombre;
+                materiaSelect.appendChild(option);
+            });
+        }
     });
 </script>
+
 @endsection
