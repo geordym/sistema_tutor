@@ -16,14 +16,19 @@ class TutorController extends Controller
 
     public function agenda()
     {
-        return view('tutores.agenda');
+        $userId = Auth::id();
+        $tutor = DB::select('SELECT * FROM tutores WHERE user_id = ?', [$userId])[0];
+
+        $sqlEspacios = 'SELECT * FROM espacios WHERE tutor_id = ?';
+        $espacios = DB::select($sqlEspacios, [$tutor->id]);
+
+        return view('tutores.agenda')->with('espacios', $espacios);
     }
 
     public function createEspacio()
     {
         $userId = Auth::id();
-
-        $tutor = DB::select('SELECT * FROM tutors WHERE user_id = ?', [$userId]);
+        $tutor = DB::select('SELECT * FROM tutores WHERE user_id = ?', [$userId]);
 
         if (empty($tutor)) {
             return redirect()->route('home')->with('error', 'No se encontró el tutor asociado a tu cuenta.');
@@ -32,15 +37,35 @@ class TutorController extends Controller
         return view('tutores.espacio_create', ['tutor' => $tutor[0]]);
     }
 
-    public function profile()
-    {
-        $user = auth()->user();
-        return view('profile', compact('user'));
-    }
+   
 
     public function logout()
     {
         Auth::logout(); 
         return redirect('/login'); 
+    }
+
+    public function vistaSaldo()
+    {
+        $userId = Auth::id();
+        $tutor = DB::select('SELECT * FROM tutores WHERE user_id = ?', [$userId])[0];
+        return view('tutores.saldo')->with('saldo', $tutor->saldo);
+    }
+
+    public function citas(){
+        $userId = Auth::id();
+        $tutor = DB::select('SELECT * FROM tutores WHERE user_id = ?', [$userId])[0];
+
+
+        $citas = DB::select(
+            '
+            SELECT citas.*, estudiantes.telefono, estudiantes.correo, estudiantes.nombre 
+            FROM citas 
+            INNER JOIN estudiantes ON estudiantes.id = citas.estudiante_id
+            WHERE citas.tutor_id = ?',
+            [$tutor->id]
+        );
+
+        return view('tutores.citas')->with('citas', $citas);
     }
 }

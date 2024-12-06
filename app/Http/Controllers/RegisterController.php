@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
-    //
 
     public function registrarEstudianteVista()
     {
@@ -19,6 +18,8 @@ class RegisterController extends Controller
 
     public function registrarEstudianteGuardar(Request $request)
     {
+
+       //dd($request);
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string|max:255',
             'matricula' => 'required|string|max:255',
@@ -35,9 +36,10 @@ class RegisterController extends Controller
 
         DB::beginTransaction();
 
+
+        
         try {
-            // Crear usuario en la tabla 'users'
-            $user = DB::table('users')->insertGetId([
+            $userId = DB::table('users')->insertGetId([
                 'user_type' => \App\Enums\UserType::Estudiante,
                 'name' => $request->input('nombre'),
                 'email' => $request->input('email'),
@@ -51,7 +53,7 @@ class RegisterController extends Controller
                 'nombre' => $request->input('nombre'),
                 'correo' => $request->input('email'),
                 'fecha_nacimiento' => $request->input('fecha_nacimiento'),
-                'user_id' => $user, // Relacionamos el estudiante con el usuario creado
+                'user_id' => $userId, 
                 'matricula' => $request->input('matricula'),
                 'telefono' => $request->input('telefono'),
                 'direccion' => $request->input('direccion'),
@@ -88,7 +90,7 @@ class RegisterController extends Controller
             return $item;
         });
 
-        return view('public.registrar_tutor', compact('areasMaterias'));
+        return view('public.registrar_tutor')->with('areasMaterias', $areasMaterias);
     }
 
     private function removeAccents($string)

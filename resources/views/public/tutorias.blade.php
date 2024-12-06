@@ -58,9 +58,11 @@
                 @if (empty($tutores))
                 <p class="text-muted">No hay tutores disponibles para esta materia.</p>
                 @else
+
+                
                 @foreach ($tutores as $tutor)
                 <a href="{{route('agendar.tutor', $tutor->id  )}}" class="list-group-item list-group-item-action">
-                    {{ $tutor->user_name }} <!-- Mostrar el nombre del tutor -->
+                    {{ $tutor->user_name }}
                 </a>
                 @endforeach
                 @endif

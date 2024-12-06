@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('direccion')->nullable(); // Dirección del tutor
             $table->unsignedBigInteger('costo_por_hora');
             $table->unsignedBigInteger('user_id'); // Relación con la tabla users
+            $table->decimal('saldo')->default(0); 
            
             $table->timestamps();
             $table->foreign('area_id')->references('id')->on('areas')->onDelete('cascade');

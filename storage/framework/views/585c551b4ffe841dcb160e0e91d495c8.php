@@ -1,7 +1,25 @@
 <?php $__env->startSection('title', 'Sistema Tutores'); ?>
 
+
 <?php $__env->startSection('content'); ?>
-    <div class="container">
+
+<?php if(session('success')): ?>
+    <div class="alert alert-success">
+        <?php echo e(session('success')); ?>
+
+    </div>
+    <?php endif; ?>
+
+<?php if(session('error')): ?>
+    <div class="alert alert-danger">
+        <?php echo e(session('error')); ?>
+
+    </div>
+<?php endif; ?>
+
+
+
+<div class="container">
         <!-- Sección Hero (introducción) -->
         <div class="row justify-content-center my-5">
             <div class="col-md-8 text-center">
@@ -38,7 +56,7 @@
 
       
 
-    </div> <!-- Fin del contenedor -->
+    </div> 
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('components.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\laragon\www\sistema_cursos2\resources\views/welcome.blade.php ENDPATH**/ ?>

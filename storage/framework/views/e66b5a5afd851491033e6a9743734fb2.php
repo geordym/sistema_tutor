@@ -107,10 +107,11 @@
     document.getElementById('area').addEventListener('change', function() {
         console.log("Cambiado");
         const selectedAreaId = this.value;
+
         const materiaSelect = document.getElementById('materia');
         console.log(materiaSelect);
 
-        materiaSelect.innerHTML = '<option value="">Selecciona una opción</option>';
+        materiaSelect.innerHTML = '<option value="">Selecciona una opción</option>'; // lo puse aqui para vaciar las materias y poner las nuevas
 
         const filteredMaterias = areasMaterias.filter(item => item.area_id == selectedAreaId);
         console.log(filteredMaterias);
@@ -118,7 +119,7 @@
         filteredMaterias.forEach(item => {
             const option = document.createElement('option');
             option.value = item.materia_id;
-            option.textContent = item.materia_nombre;
+            option.textContent = "TODAS VAN A SER IGUALES";
             materiaSelect.appendChild(option);
             console.log("Creando option");
             console.log(item);

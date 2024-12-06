@@ -46,38 +46,26 @@ Route::get('/cuenta-pendiente', [PublicController::class, 'index'])->name('cuent
 Route::get('/tutores', [PublicController::class, 'tutores'])->name('public.tutores');
 
 Route::get('/tutorias', [PublicController::class, 'tutorias'])->name('public.tutorias');
-Route::get('/tutorias/{materiaId}', [PublicController::class, 'tutoriasPorMateria'])->name('public.tutorias.porMateriaId');
+Route::get('/tutorias/materia/{materiaId}', [PublicController::class, 'tutoriasPorMateria'])->name('public.tutorias.porMateriaId');
 
 
 Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/admin/home', [AdminController::class, 'home'])->name('admin.home');
-   
     Route::get('/admin/usuarios', [AdminController::class, 'indexUsuarios'])->name('admin.usuarios.index');
-
     Route::get('/admin/usuarios/desactivar/{id}', [AdminController::class, 'desactivarUsuario'])->name('admin.usuarios.desactivar');
     Route::get('/admin/usuarios/activar/{id}', [AdminController::class, 'activarUsuario'])->name('admin.usuarios.activar');
-
-
 });
 
-Route::group(['middleware' => ['auth']], function () {
-    Route::get('/perfil', [PerfilController::class, 'perfil'])->name('perfil');
-
-    Route::post('/update-profile-image', [UserController::class, 'updateProfileImage'])->name('user.updateProfileImage');
-
-    Route::get('/change-password', [App\Http\Controllers\ChangePasswordController::class, 'showChangePasswordForm'])->name('password.change');
-    Route::post('/change-password', [App\Http\Controllers\ChangePasswordController::class, 'changePassword']);
-
-});
 
 Route::group(['middleware' => ['auth', 'tutor']], function () {
     Route::get('/tutor/home', [App\Http\Controllers\TutorController::class, 'home'])->name('tutor.home');
     Route::get('/tutor/agenda', [App\Http\Controllers\TutorController::class, 'agenda'])->name('tutor.agenda');
     Route::get('/tutor/espacio', [App\Http\Controllers\TutorController::class, 'createEspacio'])->name('tutor.createEspacio');
+    Route::get('/tutor/citas', [App\Http\Controllers\TutorController::class, 'citas'])->name('tutor.citas');
+    Route::get('/tutor/saldo', [App\Http\Controllers\TutorController::class, 'vistaSaldo'])->name('tutor.saldo');
 
 
     Route::post('/tutor/espacio', [App\Http\Controllers\EspacioController::class, 'store'])->name('espacios.store');
-
 });
 
 Route::group(['middleware' => ['auth', 'estudiante']], function () {
@@ -100,4 +88,3 @@ Route::group(['middleware' => ['auth', 'estudiante']], function () {
 
 
 
-Route::get('/create-storage-link', [StorageLinkController::class, 'createStorageLink']);

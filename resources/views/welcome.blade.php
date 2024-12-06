@@ -2,8 +2,24 @@
 
 @section('title', 'Sistema Tutores')
 
+
 @section('content')
-    <div class="container">
+
+@if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
+@if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
+
+
+<div class="container">
         <!-- Sección Hero (introducción) -->
         <div class="row justify-content-center my-5">
             <div class="col-md-8 text-center">
@@ -40,5 +56,5 @@
 
       
 
-    </div> <!-- Fin del contenedor -->
+    </div> 
 @endsection

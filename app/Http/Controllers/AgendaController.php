@@ -26,11 +26,11 @@ class AgendaController extends Controller
         $tutor = DB::select($sql, [$id])[0];
 
 
-        $sqlEspacios = 'SELECT * FROM espacios WHERE tutor_id = ?';
+        $sqlEspacios = 'SELECT * FROM espacios WHERE tutor_id = ? AND espacioTomado = 0';
         $espacios = DB::select($sqlEspacios, [$tutor->id]);
 
         $mesActual = date('m');
-        $anioActual = date('Y'); 
+        $anioActual = date('Y');
 
         $diasTotales = cal_days_in_month(CAL_GREGORIAN, $mesActual, $anioActual);
 
@@ -124,11 +124,16 @@ class AgendaController extends Controller
 
         $facturaItem = [
             [
-                'descripcion' => "Cita con tutor {$tutor->name} el {$cita->fecha}",
+                'descripcion' => "Cita con tutor {$tutor->nombre} el {$cita->fecha}",
                 'cantidad' => 1,
                 'precio_unitario' => $cita->costo_total,
             ]
         ];
+
+        DB::update(
+            'UPDATE tutores SET saldo = saldo + ? WHERE id = ?',
+            [$request->input('costo_total'), $tutor->id]
+        );
 
         $facturaCreada = $this->facturaController->crearFactura($userId, $facturaItem);
         return view('estudiantes.agradecimiento')->with('cita', $cita)->with('tutor', $tutor);

@@ -59,9 +59,12 @@
                 <?php if(empty($tutores)): ?>
                 <p class="text-muted">No hay tutores disponibles para esta materia.</p>
                 <?php else: ?>
+
+                
                 <?php $__currentLoopData = $tutores; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tutor): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <a href="<?php echo e(route('agendar.tutor', $tutor->id  )); ?>" class="list-group-item list-group-item-action">
-                    <?php echo e($tutor->user_name); ?> <!-- Mostrar el nombre del tutor -->
+                    <?php echo e($tutor->user_name); ?>
+
                 </a>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 <?php endif; ?>

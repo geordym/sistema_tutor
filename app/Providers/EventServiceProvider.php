@@ -104,20 +104,10 @@ class EventServiceProvider extends ServiceProvider
                         'text' => 'Saldo',
                         'url'  => '/tutor/saldo',
                     ],
-
                 );
              
             }
 
-            $event->menu->add([
-                'text' => 'Perfil',
-                'url'  => '/perfil',
-            ]);
-
-            $event->menu->add([
-                'text' => 'Acceso',
-                'url'  => '/change-password',
-            ]);
 
         });
 
