@@ -43,7 +43,7 @@ class RegisterController extends Controller
             INSERT INTO users (user_type, name, email, password, created_at, updated_at) 
             VALUES (:user_type, :name, :email, :password, NOW(), NOW())
         ", [
-                'user_type' => \App\Enums\UserType::Estudiante,
+                'user_type' => 'estudiante',
                 'name' => $request->input('nombre'),
                 'email' => $request->input('email'),
                 'password' => bcrypt($request->input('password')),
@@ -128,7 +128,7 @@ class RegisterController extends Controller
             INSERT INTO users (user_type, name, email, password, created_at, updated_at)
             VALUES (:user_type, :name, :email, :password, :created_at, :updated_at);
         ", [
-                'user_type' => \App\Enums\UserType::Tutor,
+                'user_type' => 'tutor',
                 'name' => $request->input('nombre'),
                 'email' => $request->input('email'),
                 'password' => bcrypt($request->input('password')), // Hasheo de la contraseña
