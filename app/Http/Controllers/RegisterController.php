@@ -123,37 +123,33 @@ class RegisterController extends Controller
         DB::beginTransaction();
 
         try {
-            // 1. Insertar el nuevo usuario en la tabla de usuarios
-           DB::insert("
+            DB::insert("
             INSERT INTO users (user_type, name, email, password, created_at, updated_at)
-            VALUES (:user_type, :name, :email, :password, :created_at, :updated_at);
+            VALUES (:user_type, :name, :email, :password, GETDATE(), GETDATE());
         ", [
-                'user_type' => 'tutor',
-                'name' => $request->input('nombre'),
-                'email' => $request->input('email'),
-                'password' => bcrypt($request->input('password')), // Hasheo de la contraseña
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            'user_type' => 'tutor',
+            'name' => $request->input('nombre'),
+            'email' => $request->input('email'),
+            'password' => bcrypt($request->input('password')), 
+        ]);
+        
 
-            $userId = DB::getPdo()->lastInsertId(); // Obtener el ID del usuario insertado
+            $userId = DB::getPdo()->lastInsertId();
 
-            // 2. Insertar los datos del tutor
             DB::insert("
             INSERT INTO tutores (user_id, materia_id, area_id, nombre, telefono, correo, direccion, costo_por_hora, created_at, updated_at)
-            VALUES (:user_id, :materia_id, :area_id, :nombre, :telefono, :correo, :direccion, :costo_por_hora, :created_at, :updated_at);
+            VALUES (:user_id, :materia_id, :area_id, :nombre, :telefono, :correo, :direccion, :costo_por_hora, GETDATE(), GETDATE());
         ", [
-                'user_id' => $userId,
-                'materia_id' => $request->input('materia'),
-                'area_id' => $request->input('area'),
-                'nombre' => $request->input('nombre'),
-                'telefono' => $request->input('telefono'),
-                'correo' => $request->input('email'),
-                'direccion' => $request->input('direccion'),
-                'costo_por_hora' => $request->input('costo_por_hora'),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            'user_id' => $userId,
+            'materia_id' => $request->input('materia'),
+            'area_id' => $request->input('area'),
+            'nombre' => $request->input('nombre'),
+            'telefono' => $request->input('telefono'),
+            'correo' => $request->input('email'),
+            'direccion' => $request->input('direccion'),
+            'costo_por_hora' => $request->input('costo_por_hora'),
+        ]);
+        
 
             // Commit de la transacción si todo salió bien
             DB::commit();

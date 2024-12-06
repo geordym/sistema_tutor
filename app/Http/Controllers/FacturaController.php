@@ -27,38 +27,31 @@ class FacturaController extends Controller
 
     public function crearFactura($userId, $items)
     {
-        // Iniciar una transacción para asegurar consistencia
         DB::beginTransaction();
 
         try {
-            // Calcular el total de la factura
             $total = 0;
             foreach ($items as $item) {
                 $total += $item['cantidad'] * $item['precio_unitario'];
             }
 
-            // Crear la factura usando SQL puro
             $sqlFactura = "
-                INSERT INTO facturas (usuario_id, fecha_emision, total, estado, created_at, updated_at) 
-                VALUES (:usuario_id, :fecha_emision, :total, :estado, :created_at, :updated_at)
-            ";
+    INSERT INTO facturas (usuario_id, fecha_emision, total, estado, created_at, updated_at) 
+    VALUES (:usuario_id, GETDATE(), :total, :estado, GETDATE(), GETDATE())
+";
             DB::insert($sqlFactura, [
                 'usuario_id' => $userId,
-                'fecha_emision' => now(),
                 'total' => $total,
                 'estado' => 'pendiente',
-                'created_at' => now(),
-                'updated_at' => now(),
             ]);
 
-            // Obtener el ID de la factura creada
+
             $facturaId = DB::getPdo()->lastInsertId();
 
-            // Crear los ítems de la factura
             $sqlItem = "
-                INSERT INTO facturas_items (factura_id, descripcion, cantidad, precio_unitario, subtotal, created_at, updated_at) 
-                VALUES (:factura_id, :descripcion, :cantidad, :precio_unitario, :subtotal, :created_at, :updated_at)
-            ";
+            INSERT INTO facturas_items (factura_id, descripcion, cantidad, precio_unitario, subtotal, created_at, updated_at) 
+            VALUES (:factura_id, :descripcion, :cantidad, :precio_unitario, :subtotal, GETDATE(), GETDATE())
+        ";
 
             foreach ($items as $item) {
                 DB::insert($sqlItem, [
@@ -67,10 +60,9 @@ class FacturaController extends Controller
                     'cantidad' => $item['cantidad'],
                     'precio_unitario' => $item['precio_unitario'],
                     'subtotal' => $item['cantidad'] * $item['precio_unitario'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
                 ]);
             }
+
 
             // Confirmar la transacción
             DB::commit();

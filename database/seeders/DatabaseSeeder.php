@@ -18,15 +18,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        DB::insert('insert into users (name, email, password, user_type, created_at, updated_at) values (?, ?, ?, ?, ?, ?)', [
+        DB::insert('insert into users (name, email, password, user_type, created_at, updated_at) values (?, ?, ?, ?, GETDATE(), GETDATE())', [
             'admin',
             'admin@adminlte.com',
             bcrypt('password123'),
-            'Admin',
-            now(),
-            now(),
+            'admin',
         ]);
-
-        
     }
 }

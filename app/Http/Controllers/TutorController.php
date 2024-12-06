@@ -11,7 +11,12 @@ class TutorController extends Controller
 {
     public function home()
     {
-        return view('tutores.agenda');
+        $userId = Auth::id();
+        $tutor = DB::select('SELECT * FROM tutores WHERE user_id = ?', [$userId])[0];
+
+        $sqlEspacios = 'SELECT * FROM espacios WHERE tutor_id = ?';
+        $espacios = DB::select($sqlEspacios, [$tutor->id]);
+        return view('tutores.agenda')->with('espacios', $espacios);
     }
 
     public function agenda()
